@@ -1,0 +1,31 @@
+h1 {
+    text-align: center;
+    border-bottom: 1px solid #666;
+}
+#article {
+    border: 1px solid #666666;
+    border-radius: 5px;
+    padding: 5px;
+}
+
+#article-title {
+    text-align: center;
+}
+#error {
+    text-align: center;
+    color: red;
+    border: 1px solid red;
+    border-radius: 4px;
+    display: none;
+}
+
+#user-list {
+    width: 200px;
+}
+
+#user-info {
+    padding: 10px 20px;
+    background-color: #99ffb7;
+    border: aqua 1px solid;
+    text-align: center;
+}

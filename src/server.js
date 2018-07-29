@@ -1,5 +1,6 @@
 const express = require('express')
 const bodyParser = require('body-parser')
+const path = require('path')
 
 const mongo = require('./mongo')
 const {getArticle, getAllUsers, upVoteArticle} = require('./services')
@@ -50,7 +51,7 @@ app.post('/upVoteComment', async (req, res) => {
 
 })
 
-app.use(express.static('../static', {index: ['index.html'],}))
+app.use(express.static(path.resolve('./static'), {index: ['index.html'],}))
 
 
 mongo.init()

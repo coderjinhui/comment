@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "nyc mocha test/**/*.test.js --exit",
+    "report": "nyc report --reporter=lcov",
+    "start": "node server.js"
   },
   "keywords": [],
   "author": "",
@@ -13,5 +15,10 @@
     "body-parser": "^1.18.3",
     "express": "^4.16.3",
     "mongodb": "^3.1.1"
+  },
+  "devDependencies": {
+    "mocha": "^5.2.0",
+    "nyc": "^12.0.2",
+    "power-assert": "^1.6.0"
   }
 }

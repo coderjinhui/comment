@@ -4,8 +4,14 @@ module.exports = {
     COMMENT: 'comment',
     ARTICLE: 'article',
   },
+  indexes: {
+    users: {
+
+    }
+  },
   article: {
     id: '0001',
+    createTime: 1532839242991,
     title: '春',
     content: '盼望着，盼望着，东风来了，春天的脚步近了。\n' +
       '一切都像刚睡醒的样子，欣欣然张开了眼。山朗润起来了，水涨起来了，太阳的脸红起来了。\n' +
@@ -24,6 +30,7 @@ module.exports = {
     gender: '',
     name: '',
   },
+  projection: {projection: {_id: 0}},
   users: [
     {
       id: '0001',

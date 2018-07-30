@@ -22,6 +22,8 @@ const getOneUser = async id => await mongo.db.collection(collections.USER).findO
  * @param field {fieldType} can modified field in user info
  * @param type {actionType} action type
  * @param document {object} data apply on user info
+ * @param [document.article] {string} data apply on user info
+ * @param [document.comment] {string} data apply on user info
  * @return {Promise}
  * */
 const updateOneUser = async (id, field, type, document) => {

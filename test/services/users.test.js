@@ -1,16 +1,19 @@
 const assert = require('assert')
 const mongo = require('../../src/mongo')
 const services = require('../../src/services')
-const collections = require('../../src/config')
 const {users} = require('../../src/config')
 
 describe('service users.js tests', () => {
-  beforeEach(function () {
-    return mongo.init()
+  beforeEach(async function () {
+    return await mongo.init()
   })
 
   const fakeUpVoteArticle = {
     article: '00020',
+    timestamp: new Date() * 1
+  }
+  const fakeUpVoteComment = {
+    comment: '00020',
     timestamp: new Date() * 1
   }
   const testUserId = '0005'
@@ -28,15 +31,65 @@ describe('service users.js tests', () => {
     assert.ok(Array.isArray(user.upVoteArticles), 'user upVoteArticles should be an array')
   })
 
-  // it('update one user with push', async () => {
-  //   const res = await services.users.updateOneUserWithPush(testUserId, fakeUpVoteArticle)
-  //   assert(res.upVoteArticles.find(record => record.article === fakeUpVoteArticle.article))
-  // })
+  it('comment one article', async () => {
+    const res = await services.users.updateOneUser(testUserId, 'upVoteArticles', 'add', fakeUpVoteArticle)
+    assert(res.upVoteArticles.find(record => record.article === fakeUpVoteArticle.article) !== undefined)
+  })
 
-  it('update one user with pop', async () => {
-    const res = await services.users.updateOneUserWithPop(testUserId, fakeUpVoteArticle)
-    console.log(res)
+  it('cancel comment one article', async () => {
+    try {
+      const res = await services.users.updateOneUser(testUserId, 'upVoteArticles', 'remove', fakeUpVoteArticle)
+      assert(res.upVoteArticles.find(record => record.article === fakeUpVoteArticle.article) === undefined)
+    } catch ( e ) {
+      assert(e.message === 'Cannot find record: ' + fakeUpVoteArticle.article)
+    }
+  })
+
+  it('down Vote one article', async () => {
+    const res = await services.users.updateOneUser(testUserId, 'downVoteArticles', 'add', fakeUpVoteArticle)
     assert(res.upVoteArticles.find(record => record.article === fakeUpVoteArticle.article) === undefined)
+  })
+
+  it('cancel down Vote one article', async () => {
+    const res = await services.users.updateOneUser(testUserId, 'downVoteArticles', 'remove', fakeUpVoteArticle)
+    assert(res.upVoteArticles.find(record => record.article === fakeUpVoteArticle.article) === undefined)
+  })
+
+  it('cancel down Vote without articles', async () => {
+    try {
+      await services.users.updateOneUser(testUserId, 'downVoteArticles', 'remove', fakeUpVoteArticle)
+    } catch ( e ) {
+      assert(e.message === 'Cannot find record: ' + fakeUpVoteArticle.article)
+    }
+  })
+
+  it('comment one comment', async () => {
+    const res = await services.users.updateOneUser(testUserId, 'upVoteComments', 'add', fakeUpVoteComment)
+    assert(res.upVoteComments.find(record => record.comment === fakeUpVoteComment.comment) !== undefined)
+  })
+
+  it('remove comment of one comment', async () => {
+    const res = await services.users.updateOneUser(testUserId, 'upVoteComments', 'remove', fakeUpVoteComment)
+    assert(res.upVoteComments.find(record => record.comment === fakeUpVoteComment.comment) === undefined)
+  })
+
+  it('down Vote one comment', async () => {
+    const res = await services.users.updateOneUser(testUserId, 'downVoteComments', 'add', fakeUpVoteComment)
+    assert(res.downVoteComments.find(record => record.comment === fakeUpVoteComment.comment) !== undefined)
+  })
+
+  it('cancel down Vote one comment', async () => {
+    const res = await services.users.updateOneUser(testUserId, 'downVoteComments', 'remove', fakeUpVoteComment)
+    assert(res.downVoteComments.find(record => record.comment === fakeUpVoteComment.comment) === undefined)
+  })
+
+  it('error field to update', async () => {
+    const field = 'aa'
+    try {
+      await services.users.updateOneUser(testUserId, 'downVoteArticles', field, fakeUpVoteArticle)
+    } catch ( e ) {
+      assert(e.message === 'Illegal field: ' + field)
+    }
   })
 
 })

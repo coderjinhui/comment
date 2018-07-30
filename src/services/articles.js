@@ -1,9 +1,12 @@
 const mongo = require('../mongo')
 const {collections} = require('../config')
 
+const getOneArticle = async id => {
+  return await mongo.db.collection(collections.ARTICLE).findOne({id: '0001'})
+}
 
-const getArticle = async id => {
-  return await mongo.db.collection(collections.ARTICLE).find({id: '0001'})
+const getAllArticle = async () => {
+  return await mongo.db.collection(collections.ARTICLE).find().toArray()
 }
 
 

@@ -1,1 +1,1 @@
-module.exports.comment = require('./commen')
+module.exports.comment = require('./comment')

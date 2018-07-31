@@ -116,13 +116,41 @@ module.exports = {
   schema: {
     user: {
       validator: {
-        $jsonSchema: {}
+        $jsonSchema: {
+          bsonType: 'object',
+          required: [ 'id', 'name', 'gender', 'upVoteArticles', 'downVoteArticles', 'upVoteComments', 'downVoteComments' ],
+          properties: {
+            id: {
+              bsonType: 'string',
+              description: 'user id'
+            },
+            createTime: {
+              bsonType: 'number',
+              description: 'user create time'
+            },
+            name: {
+              bsonType: 'string',
+              description: 'user name'
+            },
+            gender: {
+              bsonType: 'string',
+              description: 'user gender'
+            },
+            upVoteArticles: {
+              bsonType: 'array',
+              description: 'user up vote articles',
+              items: []
+            }
+          }
+        }
       }
     },
     article: {
       validator: {
         $jsonSchema: {
           bsonType: 'object',
+          validationLevel: 'strict',
+          validationAction: 'error',
           required: [ 'id', 'createTime', 'title', 'content', 'author', 'upVoteCount', 'downVoteCount', 'commentCount' ],
           properties: {
             id: {
@@ -148,17 +176,17 @@ module.exports = {
             upVoteCount: {
               bsonType: 'number',
               minimum: 0,
-              description: 'article up vote count',
+              description: 'article up vote count, bigger than 0',
             },
             downVoteCount: {
               bsonType: 'number',
               minimum: 0,
-              description: 'article down vote count',
+              description: 'article down vote count, bigger than 0',
             },
             commentCount: {
               bsonType: 'number',
               minimum: 0,
-              description: 'article comment count',
+              description: 'article comment count, bigger than 0',
             }
           }
         }

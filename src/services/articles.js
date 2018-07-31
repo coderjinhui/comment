@@ -36,7 +36,7 @@ const updateOneArticle = async (id, field, type, document) => {
     case 'upVoteCount':
     case 'downVoteCount':
     case 'commentCount':
-      return (await mongo.db.collection(collections.USER).findOneAndUpdate({id}, {$inc: {[ field ]: document.count}}, _projection)).value
+      return (await mongo.db.collection(collections.ARTICLE).findOneAndUpdate({id}, {$inc: {[ field ]: document.count}}, _projection)).value
     default:
       throw new TypeError('Illegal field: ' + field)
   }

@@ -26,65 +26,67 @@ describe('service articles.js tests', () => {
     assert.ok(typeof article.upVoteCount, 'article upVoteCount should be a number')
   })
 
-  // it('increase comment', async () => {
-  //   const res = await services.articles.updateOneArticle(testArticleId, 'upVoteCount', 'add', fakeUpVoteArticle)
-  //   assert(res.upVoteCount === 1)
-  // })
-  //
-  // it('decrease comment', async () => {
-  //   try {
-  //     const res = await services.articles.updateOneArticle(testArticleId, 'downVoteCount', 'remove', fakeUpVoteArticle)
-  //     assert(res.upVoteArticles.find(record => record.article === fakeUpVoteArticle.article) === undefined)
-  //   } catch ( e ) {
-  //     assert(e.message === 'Cannot find record: ' + fakeUpVoteArticle.article)
-  //   }
-  // })
-  //
-  // it('down Vote one article', async () => {
-  //   const res = await services.articles.updateOneArticle(testArticleId, 'downVoteArticles', 'add', fakeUpVoteArticle)
-  //   assert(res.upVoteArticles.find(record => record.article === fakeUpVoteArticle.article) === undefined)
-  // })
-  //
-  // it('cancel down Vote one article', async () => {
-  //   const res = await services.articles.updateOneArticle(testArticleId, 'downVoteArticles', 'remove', fakeUpVoteArticle)
-  //   assert(res.upVoteArticles.find(record => record.article === fakeUpVoteArticle.article) === undefined)
-  // })
-  //
-  // it('cancel down Vote without articles', async () => {
-  //   try {
-  //     await services.articles.updateOneArticle(testArticleId, 'downVoteArticles', 'remove', fakeUpVoteArticle)
-  //   } catch ( e ) {
-  //     assert(e.message === 'Cannot find record: ' + fakeUpVoteArticle.article)
-  //   }
-  // })
-  //
-  // it('comment one comment', async () => {
-  //   const res = await services.articles.updateOneArticle(testArticleId, 'upVoteComments', 'add', fakeArticleDoc)
-  //   assert(res.upVoteComments.find(record => record.comment === fakeArticleDoc.comment) !== undefined)
-  // })
-  //
-  // it('remove comment of one comment', async () => {
-  //   const res = await services.articles.updateOneArticle(testArticleId, 'upVoteComments', 'remove', fakeArticleDoc)
-  //   assert(res.upVoteComments.find(record => record.comment === fakeArticleDoc.comment) === undefined)
-  // })
-  //
-  // it('down Vote one comment', async () => {
-  //   const res = await services.articles.updateOneArticle(testArticleId, 'downVoteComments', 'add', fakeArticleDoc)
-  //   assert(res.downVoteComments.find(record => record.comment === fakeArticleDoc.comment) !== undefined)
-  // })
-  //
-  // it('cancel down Vote one comment', async () => {
-  //   const res = await services.articles.updateOneArticle(testArticleId, 'downVoteComments', 'remove', fakeArticleDoc)
-  //   assert(res.downVoteComments.find(record => record.comment === fakeArticleDoc.comment) === undefined)
-  // })
-  //
-  // it('error field to update', async () => {
-  //   const field = 'aa'
-  //   try {
-  //     await services.articles.updateOneArticle(testArticleId, 'downVoteArticles', field, fakeUpVoteArticle)
-  //   } catch ( e ) {
-  //     assert(e.message === 'Illegal field: ' + field)
-  //   }
-  // })
+  it('increase up vote', async () => {
+    const res = await services.articles.updateOneArticle(testArticleId, 'upVoteCount', 'add', fakeUpVoteArticle)
+    assert(res.upVoteCount === 1)
+  })
+
+  it('decrease up vote', async () => {
+    const res = await services.articles.updateOneArticle(testArticleId, 'upVoteCount', 'remove', fakeUpVoteArticle)
+    assert(res.upVoteCount === 0)
+  })
+
+  it('decrease up Vote under zero', async () => {
+    try {
+      await services.articles.updateOneArticle(testArticleId, 'upVoteCount', 'remove', fakeUpVoteArticle)
+    } catch ( e ) {
+      assert(e.message === 'Document failed validation')
+    }
+  })
+
+  it('increase down vote', async () => {
+    const res = await services.articles.updateOneArticle(testArticleId, 'downVoteCount', 'add', fakeUpVoteArticle)
+    assert(res.downVoteCount === 1)
+  })
+
+  it('decrease down vote', async () => {
+    const res = await services.articles.updateOneArticle(testArticleId, 'downVoteCount', 'remove', fakeUpVoteArticle)
+    assert(res.downVoteCount === 0)
+  })
+
+  it('decrease down Vote under zero', async () => {
+    try {
+      await services.articles.updateOneArticle(testArticleId, 'downVoteCount', 'remove', fakeUpVoteArticle)
+    } catch ( e ) {
+      assert(e.message === 'Document failed validation')
+    }
+  })
+
+  it('increase comment', async () => {
+    const res = await services.articles.updateOneArticle(testArticleId, 'commentCount', 'add', fakeUpVoteArticle)
+    assert(res.commentCount === 1)
+  })
+
+  it('decrease comment', async () => {
+    const res = await services.articles.updateOneArticle(testArticleId, 'commentCount', 'remove', fakeUpVoteArticle)
+    assert(res.commentCount === 0)
+  })
+
+  it('decrease comment under zero', async () => {
+    try {
+      await services.articles.updateOneArticle(testArticleId, 'commentCount', 'remove', fakeUpVoteArticle)
+    } catch ( e ) {
+      assert(e.message === 'Document failed validation')
+    }
+  })
+
+  it('error field to update', async () => {
+    const field = 'aa'
+    try {
+      await services.articles.updateOneArticle(testArticleId, 'commentCount', field, fakeUpVoteArticle)
+    } catch ( e ) {
+      assert(e.message === 'Illegal field: ' + field)
+    }
+  })
 
 })

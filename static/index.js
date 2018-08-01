@@ -12,22 +12,22 @@ $(function () {
   let users = []
   let article = {}
 
-  $.get('/article')
+  $.get('/article/0001')
     .then(d => {
       article = d
       articleTitle.html(d.title)
       articleContent.html(d.content.split('。').join('。<br>'))
-      upVoteArticle.html('点赞(' + (article.upVote) + ')')
+      upVoteArticle.html('点赞(' + (article.upVoteCount) + ')')
     })
     .catch(e => errorMessageP.html(e).show())
 
-  $.get('/users')
+  $.get('/user')
     .then(d => {
       users = d
       selectedUserId = d[0].id
       userInfo = d[0]
       if (userInfo.upVoteArticles.some(record => record.article === article.id)) {
-        upVoteArticle.html('已点赞(' + article.upVote + ')')
+        upVoteArticle.html('已点赞(' + article.upVoteCount + ')')
     }
       userInfoDiv.html(JSON.stringify(userInfo))
       $.each(d, (i, user) => {
@@ -48,7 +48,7 @@ $(function () {
     // todo 这个判断标准不好
     const btnText = upVoteArticle.html()
     if (btnText.includes('已点赞')) return
-    upVoteArticle.html('已点赞(' + (article.upVote + 1) + ')')
+    upVoteArticle.html('已点赞(' + (article.upVoteCount + 1) + ')')
     $.post('/upVoteArticle', {user: selectedUserId, article: article.id, timestamp: Date.now()})
       .then((d => {
         console.log(d)

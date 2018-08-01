@@ -7,6 +7,8 @@ const schema = new mongoose.Schema({
   commentId: String,
   article: String,
   createTime: Number,
+  isDeleted: Boolean,
+  deleteTimestamp: Number,
 })
 
 module.exports = new schema()

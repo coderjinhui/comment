@@ -18,7 +18,6 @@ const users = () => {
       gender: 'female',
     },
     {
-      id: '0005',
       name: '罗雨筠',
       gender: 'female',
     },
@@ -71,7 +70,6 @@ module.exports = {
       upVoteCount: 0,
       downVoteCount: 0,
       commentCount: 1,
-
     },
     {
       id: '0002',

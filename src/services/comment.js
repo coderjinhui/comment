@@ -15,14 +15,35 @@ const addOneComment = async ({userId, commentId, articleId, content}) =>
     isDeleted: false,
   }, projection)
 
-const deleteOneComment = async id => await mongo.db.collection(collections.COMMENT).findOneAndUpdate({id}, projection)
+const deleteOneComment = async ({id, articleId, userId}) =>
+  await mongo.db.collection(collections.COMMENT).findOneAndUpdate({id}, {
+    $set: {
+      isDeleted: true,
+      deletedTime: Date.now(),
+      deletedBy: articleId || userId
+    }
+  }, projection)
 
-const deleteCommentsByArticle = async articleId => await mongo.db.collection(collections.COMMENT).find({articleId})
+/**
+ * @description 批量删除文章的评论
+ * @param articleId {string} 文章的id
+ * @return {Promise}
+ * */
+const deleteCommentsByArticle = async articleId =>
+  await mongo.db.collection(collections.COMMENT).updateMany({articleId}, {
+    $set: {
+      isDeleted: true,
+      deletedTime: Date.now()
+    }
+  })
 
-const deleteCommentsByUser = async userId => await mongo.db.collection(collections.COMMENT).find({userId})
+// const deleteCommentsByUser = async userId => await mongo.db.collection(collections.COMMENT).find({userId})
 
 module.exports = {
-  getAllUsers,
-  getOneUser,
-  updateOneUser,
+  getCommentsByFilter,
+  getOneComment,
+  addOneComment,
+  deleteCommentsByArticle,
+  // deleteCommentsByUser,
+  deleteOneComment,
 }

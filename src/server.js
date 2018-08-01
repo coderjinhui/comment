@@ -14,7 +14,7 @@ app.use(bodyParser.urlencoded({extended: false}))
 
 app.use('/article', routers.articles)
 app.use('/user', routers.users)
-app.use('/comment', routers.comments)
+app.use('/comments', routers.comments)
 app.use('/login', routers.authorization)
 
 app.use(express.static(path.resolve('./static'), {index: ['index.html'],}))

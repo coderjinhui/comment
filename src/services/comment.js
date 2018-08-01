@@ -7,7 +7,15 @@ const getCommentsByFilter = async ({id, articleId, userId, commentId}) =>
 
 const getOneComment = async id => await mongo.db.collection(collections.COMMENT).findOne({id}, projection)
 
-const addOneComment = async ({userId, commentId, articleId, content}) =>
+/**
+ * @description 增加一个评论
+ * @param userId {string}
+ * @param articleId {string}
+ * @param content {string}
+ * @param commentId=null {string}
+ * @return {promise} the comment added
+ * */
+const addOneComment = async (userId, articleId, content, commentId=null) =>
   await mongo.db.collection(collections.COMMENT).insertOne({
     userId, commentId, articleId, content,
     id: genUUID(),

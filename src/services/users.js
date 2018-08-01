@@ -11,7 +11,7 @@ const getOneUser = async id => await mongo.db.collection(collections.USER).findO
 
 /**
  * modifiable field of user info
- * @typedef {('upVoteArticles' | 'downVoteArticles' | 'upVoteComments' | 'downVoteComments')} fieldType
+ * @typedef {('upVoteArticles' | 'downVoteArticles' | 'upVoteComments' | 'downVoteComments' | 'commentCount')} fieldType
  * */
 
 /**
@@ -24,6 +24,7 @@ const getOneUser = async id => await mongo.db.collection(collections.USER).findO
  * @param document {object} data apply on user info
  * @param [document.article] {string} data apply on user info
  * @param [document.comment] {string} data apply on user info
+ * @param [document.count] {number} data apply on user info
  * @return {Promise}
  * */
 const updateOneUser = async (id, field, type, document) => {
@@ -56,6 +57,8 @@ const updateOneUser = async (id, field, type, document) => {
         }
       }
       break
+    case 'commentCount':
+      return await mongo.db.collection(collections.USER).findOneAndUpdate({id}, {$inc: {[field]: (type === 'add' ? 1 : -1) * document.count}})
     default:
       throw new TypeError('Illegal field: ' + field)
   }

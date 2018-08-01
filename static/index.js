@@ -2,6 +2,7 @@ const $ = window.jQuery
 $(function () {
   const articleTitle = $('#article-title')
   const articleContent = $('#article-content')
+  const articleComment = $('#article-comment')
   const errorMessageP = $('#error')
   const userSelect = $('#user-select')
   const userInfoDiv = $('#user-info')
@@ -54,4 +55,13 @@ $(function () {
         console.log(d)
       }))
   })
+
+  $.get('/comments/article/0001').then(d => {
+
+  }).catch(e => errorMessageP.html(e).show())
+
+  articleComment.on('click', function () {
+
+  })
+
 })

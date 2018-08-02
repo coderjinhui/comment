@@ -20,16 +20,44 @@ h1 {
 }
 
 #user-list {
-    width: 200px;
+    background-color: #99ffb7;
+    border: aqua 1px solid;
 }
 
 #user-info {
-    padding: 10px 20px;
-    background-color: #99ffb7;
-    border: aqua 1px solid;
+    padding: 10px 20px 10px 50px;
     text-align: center;
 }
 
 #comment-box {
+    display: block;
+    border: 1px seashell solid;
 
+}
+
+#comment-box > div {
+    width: 700px;
+    border: 1px darkcyan solid;
+    margin: 0 auto;
+}
+
+#comment-box #user-header {
+    width: 60px;
+    height: 60px;
+    border: 1px solid #006600;
+    border-radius: 50%;
+    display: inline-block;
+    vertical-align: top;
+    line-height: 60px;
+    text-align: center;
+    font-size: 46px;
+}
+
+#comment-text {
+    display: inline-block;
+    width: 500px;
+    border: 1px solid #888888;
+    border-radius: 5px;
+    min-height: 200px;
+    padding: 10px;
 }

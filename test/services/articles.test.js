@@ -64,12 +64,12 @@ describe('service articles.js tests', () => {
 
   it('increase comment', async () => {
     const res = await services.articles.updateOneArticle(testArticleId, 'commentCount', 'add', fakeUpVoteArticle)
-    assert(res.commentCount === 1)
+    assert(res.commentCount === 2)
   })
 
   it('decrease comment', async () => {
     const res = await services.articles.updateOneArticle(testArticleId, 'commentCount', 'remove', fakeUpVoteArticle)
-    assert(res.commentCount === 0)
+    assert(res.commentCount === 1)
   })
 
   it('decrease comment under zero', async () => {

@@ -2,8 +2,13 @@ const mongo = require('../mongo')
 const {collections, projection} = require('../config')
 const {genUUID} = require('../utils')
 
-const getCommentsByFilter = async ({id, articleId, userId, commentId}) =>
-  await mongo.db.collection(collections.USER).find({id, articleId, userId, commentId}, projection).toArray()
+const getCommentsByFilter = async ({articleId, userId, commentId}) =>{
+  const query = {}
+  if (articleId) query.articleId = articleId
+  if (userId) query.userId = userId
+  if (commentId) query.commentId = commentId
+  return await mongo.db.collection(collections.COMMENT).find(query, projection).toArray()
+}
 
 const getOneComment = async id => await mongo.db.collection(collections.COMMENT).findOne({id}, projection)
 
@@ -45,13 +50,10 @@ const deleteCommentsByArticle = async articleId =>
     }
   })
 
-// const deleteCommentsByUser = async userId => await mongo.db.collection(collections.COMMENT).find({userId})
-
 module.exports = {
   getCommentsByFilter,
   getOneComment,
   addOneComment,
   deleteCommentsByArticle,
-  // deleteCommentsByUser,
   deleteOneComment,
 }

@@ -23,6 +23,7 @@ $(function () {
       articleContent.html(d.content.split('。').join('。<br>'))
       upVoteArticle.html('点赞(' + (article.upVoteCount) + ')')
     })
+    .then($.get('/comments/article/0001')).then(d=> {})
     .catch(e => errorMessageP.html(e.statusText).show())
 
   $.get('/user')

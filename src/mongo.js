@@ -1,11 +1,9 @@
 const MongoClient = require('mongodb').MongoClient
-const {collections, articles, users, indexes, schema} = require('./config')
-const DB_NAME = 'comments'
-const mongoUrl = 'mongodb://localhost:27017'
+const {collections, articles, users, indexes, schema, mongoDBName, mongoUrl} = require('./config')
 
 module.exports.init = async () => {
   const client = await new MongoClient(mongoUrl, {useNewUrlParser: true}).connect()
-  const db = client.db(DB_NAME)
+  const db = client.db(mongoDBName)
 
   const articleInDB = await db.collection(collections.ARTICLE).find().toArray()
   const usersInDB = await db.collection(collections.USER).find().toArray()

@@ -1,16 +1,15 @@
 const MongoClient = require('mongodb').MongoClient
-const {collections, articles, users, indexes} = require('../src/config')
-const DB_NAME = 'comments'
-const mongoUrl = 'mongodb://localhost:27017'
-const mongo = require('../src/mongo')
+const {collections, articles, users, indexes, mongoUrl, mongoDBName} = require('../src/config')
 const assert = require('assert')
 
 describe('test for mongo.js', () => {
 
+  let db
+
   before(async () => {
     try {
       const client = await new MongoClient(mongoUrl, {useNewUrlParser: true}).connect()
-      const db = client.db(DB_NAME)
+      db = client.db(mongoDBName)
       const _collections = (await db.listCollections().toArray()).map(d => d.name)
       if (_collections.includes(collections.USER)) {
         await db.collection(collections.USER).drop()
@@ -25,9 +24,8 @@ describe('test for mongo.js', () => {
 
   it('should insert', async function () {
     try{
-      await mongo.init()
-      assert.ok( await mongo.db.collection(collections.ARTICLE).find().count() === articles.length, 'articles length should be equal.')
-      assert.ok( await mongo.db.collection(collections.USER).find().count() === users.length, 'users length should be equal.')
+      assert.ok(await db.collection(collections.ARTICLE).find().count() === articles.length, 'articles length should be equal.')
+      assert.ok(await db.collection(collections.USER).find().count() === users.length, 'users length should be equal.')
     } catch (e) {
       console.error(e)
       return false

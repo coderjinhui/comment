@@ -13,6 +13,8 @@ describe('service articles.js tests', () => {
   }
   const testArticleId = '0001'
 
+  let articleInfo = {}
+
   it('all articles', async function () {
     const allArticles = await services.articles.getAllArticle()
     assert.ok(allArticles.every(article => article._id === undefined))
@@ -20,25 +22,25 @@ describe('service articles.js tests', () => {
   })
 
   it('single article', async () => {
-    const article = await services.articles.getOneArticle('0001')
-    assert(article._id === undefined)
-    assert.ok(typeof article.id === 'string', 'article id should be a string')
-    assert.ok(typeof article.upVoteCount, 'article upVoteCount should be a number')
+    articleInfo = await services.articles.getOneArticle('0001')
+    assert(articleInfo._id === undefined)
+    assert.ok(typeof articleInfo.id === 'string', 'article id should be a string')
+    assert.ok(typeof articleInfo.upVoteCount, 'article upVoteCount should be a number')
   })
 
   it('increase up vote', async () => {
     const res = await services.articles.updateOneArticle(testArticleId, 'upVoteCount', 'add', fakeUpVoteArticle)
-    assert(res.upVoteCount === 1)
+    assert(res.upVoteCount - articleInfo.upVoteCount === 1)
   })
 
   it('decrease up vote', async () => {
     const res = await services.articles.updateOneArticle(testArticleId, 'upVoteCount', 'remove', fakeUpVoteArticle)
-    assert(res.upVoteCount === 0)
+    assert(res.upVoteCount - articleInfo.upVoteCount === 0)
   })
 
   it('decrease up Vote under zero', async () => {
     try {
-      await services.articles.updateOneArticle(testArticleId, 'upVoteCount', 'remove', fakeUpVoteArticle)
+      await services.articles.updateOneArticle(testArticleId, 'upVoteCount', 'remove', {count: articleInfo.upVoteCount + 1})
     } catch ( e ) {
       assert(e.message === 'Document failed validation')
     }
@@ -46,17 +48,18 @@ describe('service articles.js tests', () => {
 
   it('increase down vote', async () => {
     const res = await services.articles.updateOneArticle(testArticleId, 'downVoteCount', 'add', fakeUpVoteArticle)
-    assert(res.downVoteCount === 1)
+    console.log(res, articleInfo)
+    assert(res.downVoteCount - articleInfo.downVoteCount === 1)
   })
 
   it('decrease down vote', async () => {
     const res = await services.articles.updateOneArticle(testArticleId, 'downVoteCount', 'remove', fakeUpVoteArticle)
-    assert(res.downVoteCount === 0)
+    assert(res.downVoteCount - articleInfo.downVoteCount === 0)
   })
 
   it('decrease down Vote under zero', async () => {
     try {
-      await services.articles.updateOneArticle(testArticleId, 'downVoteCount', 'remove', fakeUpVoteArticle)
+      await services.articles.updateOneArticle(testArticleId, 'downVoteCount', 'remove', {count: articleInfo.downVoteCount + 1})
     } catch ( e ) {
       assert(e.message === 'Document failed validation')
     }
@@ -64,17 +67,17 @@ describe('service articles.js tests', () => {
 
   it('increase comment', async () => {
     const res = await services.articles.updateOneArticle(testArticleId, 'commentCount', 'add', fakeUpVoteArticle)
-    assert(res.commentCount === 2)
+    assert(res.commentCount - articleInfo.commentCount === 1)
   })
 
   it('decrease comment', async () => {
     const res = await services.articles.updateOneArticle(testArticleId, 'commentCount', 'remove', fakeUpVoteArticle)
-    assert(res.commentCount === 1)
+    assert(res.commentCount - articleInfo.commentCount === 0)
   })
 
   it('decrease comment under zero', async () => {
     try {
-      await services.articles.updateOneArticle(testArticleId, 'commentCount', 'remove', fakeUpVoteArticle)
+      await services.articles.updateOneArticle(testArticleId, 'commentCount', 'remove', {count: articleInfo.commentCount + 1})
     } catch ( e ) {
       assert(e.message === 'Document failed validation')
     }

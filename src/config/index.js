@@ -1,3 +1,5 @@
+const mongoModel = require('./models')
+const mongoConfig = require('./mongoConfig')
 const users = () => {
   const now = Date.now()
   return [
@@ -36,27 +38,6 @@ const users = () => {
 }
 
 module.exports = {
-  collections: {
-    USER: 'user',
-    COMMENT: 'comment',
-    ARTICLE: 'article',
-  },
-  indexes: {
-    users: [
-      {key: {id: 1}, name: 'userId', unique: true},
-      {key: {createTime: 1,}, name: 'createTime', unique: true}
-    ],
-    articles: [
-      {key: {id: 1}, name: 'userId', unique: true},
-      {key: {createTime: 1,}, name: 'createTime', unique: true}
-    ],
-    comments: [
-      {key: {id: 1}, name: 'userId', unique: true},
-      {key: {createTime: 1,}, name: 'createTime', unique: true},
-      {key: {articleId: 1}, name: 'articleId'},
-      {key: {userId: 1}, name: 'userId'},
-    ]
-  },
   articles: [
     {
       id: '0001',
@@ -72,10 +53,9 @@ module.exports = {
       '春天像刚落地的娃娃，从头到脚都是新的，它生长着。\n' +
       '春天像小姑娘，花枝招展的，笑着，走着。\n' +
       '春天像健壮的青年，有铁一般的胳膊和腰脚，领着我们上前去',
-      author: '朱自清',
       upVoteCount: 0,
       downVoteCount: 0,
-      commentCount: 1,
+      commentCount: 0,
     },
     {
       id: '0002',
@@ -87,14 +67,13 @@ module.exports = {
        勃，三尺微命，一介书生。无路请缨，等终军之弱冠，有怀投笔，慕宗悫之长风。舍簪笏於百龄，奉晨昏於万里。非谢家之宝树，接孟氏之芳邻。他日趋庭，叨陪鲤对。今晨捧袂，喜托龙门。杨意不逢，抚凌云而自惜。锺期既遇，奏流水以何惭？
        呜呼！胜地不常，盛筵难再。兰亭已矣，梓泽邱墟。临别赠言，幸承恩於伟饯，登高作赋。是所望於群公。敢竭鄙诚，恭疏短引，一言均赋，四韵俱成。
        滕王高阁临江渚，佩玉鸣鸾罢歌舞。画栋朝飞南浦云，珠帘暮卷西山雨。闲云潭影日悠悠，物换星移几度秋。阁中帝子今何在？槛外长江空自流。`,
-      author: '王勃',
       upVoteCount: 0,
       downVoteCount: 0,
       commentCount: 0,
     },
   ],
-  projection: {projection: {_id: 0}},
+  projection: {_id: 0},
+  ...mongoConfig,
   users: users(),
-  mongoUrl: 'mongodb://localhost:27017',
-  mongoDBName: 'commentSystem'
+  mongoModel,
 }

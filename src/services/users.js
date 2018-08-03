@@ -1,9 +1,8 @@
-const mongo = require('../mongo')
-const {collections, projection} = require('../config')
+const {projection, mongoModel} = require('../config')
 
-const getAllUsers = async () => await mongo.db.collection(collections.USER).find({}, projection).toArray()
+const getAllUsers = async () => await mongoModel.userModel.find({}, projection)
 
-const getOneUser = async id => await mongo.db.collection(collections.USER).findOne({id}, projection)
+const getOneUser = async id => await mongoModel.userModel.findOne({id}, projection)
 
 /**
  * @typedef {('add' | 'remove')} actionType
@@ -28,7 +27,7 @@ const getOneUser = async id => await mongo.db.collection(collections.USER).findO
  * @return {Promise}
  * */
 const updateOneUser = async (id, field, type, document) => {
-  const _projection = {...projection, returnOriginal: false}
+  const _projection = {...projection, new: true}
   switch (field) {
     case 'upVoteArticles':
     case 'downVoteArticles':
@@ -40,25 +39,29 @@ const updateOneUser = async (id, field, type, document) => {
         * or
         * document: {comment: '0001', timestamp: xxx}
         * */
-        return (await mongo.db.collection(collections.USER).findOneAndUpdate({id}, {$push: {[ field ]: document}}, _projection)).value
+        return await mongoModel.userModel.findOneAndUpdate({id}, {$push: {[field]: document}}, _projection)
       } else if (type === 'remove') {
         /*
         * document: {article: '0001}
         * or
         * document: {comment: '0001}
         * */
-        const user = await mongo.db.collection(collections.USER).findOne({id})
-        const index = user[ field ].findIndex(record => record.article || record.comment === (document.article || document.comment))
+        const mongooseFind = field + '.' + (document.article ? 'article' : 'comment')
+        const user = await mongoModel.userModel.findOne({[mongooseFind]: (document.article || document.comment)})
+        const index = Array.from(user[field]).findIndex(record => {
+          return (record.article || record.comments) === (document.article || document.comment)
+        })
+        console.log(user)
         if (index > -1) {
-          const newField = [ ...user[ field ].slice(0, index), ...user[ field ].slice(index + 1) ]
-          return (await mongo.db.collection(collections.USER).findOneAndUpdate({id}, {$set: {[ field ]: newField}}, _projection)).value
+          const newField = [...user[field].slice(0, index), ...user[field].slice(index + 1)]
+          return await mongoModel.userModel.findOneAndUpdate({id}, {$set: {[field]: newField}}, _projection)
         } else {
-          throw new Error('Cannot find record: ' + document.article || document.comment)
+          throw new Error('Cannot find record: ' + (document.article || document.comment))
         }
       }
       break
     case 'commentCount':
-      return await mongo.db.collection(collections.USER).findOneAndUpdate({id}, {$inc: {[field]: (type === 'add' ? 1 : -1) * document.count}})
+      return await mongoModel.userModel.findOneAndUpdate({id}, {$inc: {[field]: (type === 'add' ? 1 : -1) * document.count}}, _projection)
     default:
       throw new TypeError('Illegal field: ' + field)
   }

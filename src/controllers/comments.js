@@ -1,6 +1,6 @@
 const services = require('../services')
 
-const {getOneComment, getCommentsByFilter, addOneComment, deleteOneComment, deleteCommentsByArticle} = services.comment
+const {getOneComment, getCommentsByFilter, addOneComment, deleteOneComment, deleteCommentsByArticle} = services.comments
 const {updateOneArticle} = services.articles
 const {updateOneUser} = services.users
 

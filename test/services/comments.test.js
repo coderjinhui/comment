@@ -16,28 +16,28 @@ describe('service/comments.js', function () {
   })
 
   it('get comments by article id', async () => {
-    assert((await services.comment.getCommentsByFilter({articleId})).length === 1)
+    assert((await services.comments.getCommentsByFilter({articleId})).length === 1)
   })
 
   it('get comments by user id', async () => {
-    assert((await services.comment.getCommentsByFilter({userId})).length === 1)
+    assert((await services.comments.getCommentsByFilter({userId})).length === 1)
   })
 
   it('add one comment', async () => {
-    const comment = await services.comment.addOneComment(userId, articleId, commentContent)
+    const comment = await services.comments.addOneComment(userId, articleId, commentContent)
     commentId = comment.id
     assert(comment.content === commentContent)
   })
 
   it('remove one comment', async () => {
-    const res = await services.comment.deleteOneComment(commentId, {userId})
+    const res = await services.comments.deleteOneComment(commentId, {userId})
     assert(res.id === commentId)
     assert(res.isDeleted === true)
     assert(res.deletedBy)
   })
 
   it('remove all comments under article', async () => {
-    const res = await services.comment.deleteCommentsByArticle(articleId)
+    const res = await services.comments.deleteCommentsByArticle(articleId)
     assert(res.result.ok === 1)
   })
 

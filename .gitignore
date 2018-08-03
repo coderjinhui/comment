@@ -3,3 +3,4 @@
 /coverage
 .idea
 tmp/
+.DS_Store

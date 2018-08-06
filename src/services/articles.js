@@ -1,12 +1,11 @@
-const mongo = require('../mongo')
-const {collections, projection} = require('../config')
+const {projection, mongoModel} = require('../config')
 
 const getOneArticle = async id => {
-  return await mongo.db.collection(collections.ARTICLE).findOne({id}, projection)
+  return await mongoModel.articleModel.findOne({id}, projection)
 }
 
-const getAllArticle = async () => {
-  return await mongo.db.collection(collections.ARTICLE).find({}, projection).toArray()
+const getAllArticles = async () => {
+  return await mongoModel.articleModel.find({}, projection)
 }
 
 /**
@@ -30,13 +29,15 @@ const getAllArticle = async () => {
  * @return {Promise}
  * */
 const updateOneArticle = async (id, field, type, document) => {
-  const _projection = {...projection, returnOriginal: false}
+  const _projection = {...projection, new: true, runValidators: true}
   document.count = type === 'add' ? document.count : -document.count
   switch (field) {
     case 'upVoteCount':
     case 'downVoteCount':
     case 'commentCount':
-      return (await mongo.db.collection(collections.ARTICLE).findOneAndUpdate({id}, {$inc: {[ field ]: document.count}}, _projection)).value
+      const doc = await mongoModel.articleModel.findOneAndUpdate({id})
+      doc[field] += document.count
+      return await doc.save()
     default:
       throw new TypeError('Illegal field: ' + field)
   }
@@ -44,6 +45,6 @@ const updateOneArticle = async (id, field, type, document) => {
 
 module.exports = {
   getOneArticle,
-  getAllArticle,
+  getAllArticles,
   updateOneArticle,
 }

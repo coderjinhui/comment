@@ -2,10 +2,15 @@ const assert = require('assert')
 const mongo = require('../../src/mongo')
 const services = require('../../src/services')
 const {articles} = require('../../src/config')
+const ValidationError = require('mongoose/lib/error/validation')
 
-describe('service articles.js tests', () => {
+describe('service/articles.js tests', () => {
   beforeEach(async function () {
-    return await mongo.init()
+    try {
+      await mongo.init()
+    } catch ( e ) {
+      console.log('service/articles.js tests before', e)
+    }
   })
 
   const fakeUpVoteArticle = {
@@ -16,7 +21,7 @@ describe('service articles.js tests', () => {
   let articleInfo = {}
 
   it('all articles', async function () {
-    const allArticles = await services.articles.getAllArticle()
+    const allArticles = await services.articles.getAllArticles()
     assert.ok(allArticles.every(article => article._id === undefined))
     assert.ok(allArticles.length = articles.length)
   })
@@ -28,36 +33,35 @@ describe('service articles.js tests', () => {
     assert.ok(typeof articleInfo.upVoteCount, 'article upVoteCount should be a number')
   })
 
-  it('increase up vote', async () => {
+  it('upVoteCount + 1', async () => {
     const res = await services.articles.updateOneArticle(testArticleId, 'upVoteCount', 'add', fakeUpVoteArticle)
     assert(res.upVoteCount - articleInfo.upVoteCount === 1)
   })
 
-  it('decrease up vote', async () => {
+  it('upVoteCount - 1', async () => {
     const res = await services.articles.updateOneArticle(testArticleId, 'upVoteCount', 'remove', fakeUpVoteArticle)
     assert(res.upVoteCount - articleInfo.upVoteCount === 0)
   })
 
-  it('decrease up Vote under zero', async () => {
+  it('upVoteCount < 0', async () => {
     try {
       await services.articles.updateOneArticle(testArticleId, 'upVoteCount', 'remove', {count: articleInfo.upVoteCount + 1})
     } catch ( e ) {
-      assert(e.message === 'Document failed validation')
+      assert(e instanceof ValidationError)
     }
   })
 
-  it('increase down vote', async () => {
+  it('downVoteCount + 1', async () => {
     const res = await services.articles.updateOneArticle(testArticleId, 'downVoteCount', 'add', fakeUpVoteArticle)
-    console.log(res, articleInfo)
     assert(res.downVoteCount - articleInfo.downVoteCount === 1)
   })
 
-  it('decrease down vote', async () => {
+  it('downVoteCount - 1', async () => {
     const res = await services.articles.updateOneArticle(testArticleId, 'downVoteCount', 'remove', fakeUpVoteArticle)
     assert(res.downVoteCount - articleInfo.downVoteCount === 0)
   })
 
-  it('decrease down Vote under zero', async () => {
+  it('downVoteCount < 0', async () => {
     try {
       await services.articles.updateOneArticle(testArticleId, 'downVoteCount', 'remove', {count: articleInfo.downVoteCount + 1})
     } catch ( e ) {
@@ -65,21 +69,21 @@ describe('service articles.js tests', () => {
     }
   })
 
-  it('increase comment', async () => {
+  it('commentCount + 1', async () => {
     const res = await services.articles.updateOneArticle(testArticleId, 'commentCount', 'add', fakeUpVoteArticle)
     assert(res.commentCount - articleInfo.commentCount === 1)
   })
 
-  it('decrease comment', async () => {
+  it('commentCount - 1', async () => {
     const res = await services.articles.updateOneArticle(testArticleId, 'commentCount', 'remove', fakeUpVoteArticle)
     assert(res.commentCount - articleInfo.commentCount === 0)
   })
 
-  it('decrease comment under zero', async () => {
+  it('commentCount < 0', async () => {
     try {
       await services.articles.updateOneArticle(testArticleId, 'commentCount', 'remove', {count: articleInfo.commentCount + 1})
     } catch ( e ) {
-      assert(e.message === 'Document failed validation')
+      assert(e instanceof ValidationError)
     }
   })
 
@@ -88,7 +92,7 @@ describe('service articles.js tests', () => {
     try {
       await services.articles.updateOneArticle(testArticleId, 'commentCount', field, fakeUpVoteArticle)
     } catch ( e ) {
-      assert(e.message === 'Illegal field: ' + field)
+      assert(e instanceof TypeError)
     }
   })
 

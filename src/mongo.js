@@ -7,9 +7,10 @@ module.exports.init = async () => {
   const userCount = await mongoModel.userModel.countDocuments()
   const articleCount = await mongoModel.articleModel.countDocuments()
   if (!userCount) {
-    await  mongoModel.userModel.insertMany(users)
+    await mongoModel.userModel.insertMany(users)
   }
   if (!articleCount) {
     await mongoModel.articleModel.insertMany(articles)
   }
+  return 1
 }

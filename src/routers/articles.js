@@ -5,7 +5,7 @@ const services = require('../services')
 
 router
   .get('/', async (req, res) => {
-    res.send(await services.articles.getAllArticle())
+    res.send(await services.articles.getAllArticles())
   })
   // .use('/:id', function (req, res, next) {
   //   console.log(req.params, req.method)

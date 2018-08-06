@@ -46,8 +46,7 @@ const updateOneUser = async (id, field, type, document) => {
         * or
         * document: {comment: '0001}
         * */
-        const mongooseFind = field + '.' + (document.article ? 'article' : 'comment')
-        const user = await mongoModel.userModel.findOne({[mongooseFind]: (document.article || document.comment)})
+        const user = await mongoModel.userModel.findOne({id})
         const index = Array.from(user[field]).findIndex(record => {
           return (record.article || record.comments) === (document.article || document.comment)
         })
@@ -61,7 +60,9 @@ const updateOneUser = async (id, field, type, document) => {
       }
       break
     case 'commentCount':
-      return await mongoModel.userModel.findOneAndUpdate({id}, {$inc: {[field]: (type === 'add' ? 1 : -1) * document.count}}, _projection)
+      const doc = await mongoModel.userModel.findOneAndUpdate({id}, {$inc: {[field]: (type === 'add' ? 1 : -1) * document.count}}, _projection)
+      doc.commentCount += (type === 'add' ? 1 : -1) * document.count
+      return await doc.save()
     default:
       throw new TypeError('Illegal field: ' + field)
   }

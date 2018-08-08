@@ -1,7 +1,6 @@
 const assert = require('assert')
 const mongo = require('../../src/mongo')
 const services = require('../../src/services')
-const {articles} = require('../../src/config')
 
 describe('service/comments.js', function () {
 
@@ -15,30 +14,33 @@ describe('service/comments.js', function () {
     return await mongo.init()
   })
 
-  it('get comments by article id', async () => {
-    assert((await services.comments.getCommentsByFilter({articleId})).length === 1)
-  })
-
-  it('get comments by user id', async () => {
-    assert((await services.comments.getCommentsByFilter({userId})).length === 1)
-  })
-
   it('add one comment', async () => {
     const comment = await services.comments.addOneComment(userId, articleId, commentContent)
     commentId = comment.id
-    assert(comment.content === commentContent)
+    assert.ok(comment.content === commentContent, 'comment content show equal')
+    assert.ok(comment.userId === userId, 'comment user id show equal')
+    assert.ok(comment.articleId === articleId, 'comment article id show equal')
+  })
+
+  it('get comments by article id', async () => {
+    const res = await services.comments.getCommentsByFilter({articleId})
+    assert(res.every(comment => comment.articleId === articleId))
+  })
+
+  it('get comments by user id', async () => {
+    const res = await services.comments.getCommentsByFilter({userId})
+    assert(res.every(comment => comment.userId === userId))
   })
 
   it('remove one comment', async () => {
     const res = await services.comments.deleteOneComment(commentId, {userId})
-    assert(res.id === commentId)
     assert(res.isDeleted === true)
-    assert(res.deletedBy)
+    assert(res.deletedBy = userId)
   })
 
   it('remove all comments under article', async () => {
     const res = await services.comments.deleteCommentsByArticle(articleId)
-    assert(res.result.ok === 1)
+    assert(res.ok === 1)
   })
 
 })

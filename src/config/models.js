@@ -18,7 +18,7 @@ const commentSchema = new mongoose.Schema({
   content: {type: String, required: true},
   userId: String,
   commentId: String,
-  article: String,
+  articleId: String,
   isDeleted: Boolean,
   deleteTimestamp: Number,
 })

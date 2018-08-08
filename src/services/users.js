@@ -47,15 +47,12 @@ const updateOneUser = async (id, field, type, document) => {
         * document: {comment: '0001}
         * */
         const user = await mongoModel.userModel.findOne({id})
-        const index = Array.from(user[field]).findIndex(record => {
-          return (record.article || record.comments) === (document.article || document.comment)
-        })
-        console.log(user)
+        const index = user[field].findIndex(record => (record.article || record.comment) === (document.article || document.comment))
         if (index > -1) {
           const newField = [...user[field].slice(0, index), ...user[field].slice(index + 1)]
           return await mongoModel.userModel.findOneAndUpdate({id}, {$set: {[field]: newField}}, _projection)
         } else {
-          throw new Error('Cannot find record: ' + (document.article || document.comment))
+          throw new RangeError('Cannot find record: ' + (document.article || document.comment))
         }
       }
       break

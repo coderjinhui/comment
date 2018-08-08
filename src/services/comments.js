@@ -1,5 +1,5 @@
 const mongo = require('../mongo')
-const {collections, projection} = require('../config')
+const {mongoModel, projection} = require('../config')
 const {genUUID} = require('../utils')
 
 /**
@@ -9,15 +9,15 @@ const {genUUID} = require('../utils')
  * @param [commentId] {string}
  * @returns {Promise<comment>}
  */
-const getCommentsByFilter = async ({articleId, userId, commentId}) =>{
+const getCommentsByFilter = async ({articleId, userId, commentId}) => {
   const query = {}
   if (articleId) query.articleId = articleId
   if (userId) query.userId = userId
   if (commentId) query.commentId = commentId
-  return await mongo.db.collection(collections.COMMENT).find(query, projection).toArray()
+  return await mongoModel.commentModel.find(query, projection)
 }
 
-const getOneComment = async id => await mongo.db.collection(collections.COMMENT).findOne({id}, projection)
+const getOneComment = async id => await mongoModel.commentModel.findOne({id}, projection)
 
 /**
  * @function
@@ -28,13 +28,15 @@ const getOneComment = async id => await mongo.db.collection(collections.COMMENT)
  * @param commentId=null {string}
  * @return {promise} the comment added
  * */
-const addOneComment = async (userId, articleId, content, commentId=null) =>
-  (await mongo.db.collection(collections.COMMENT).insertOne({
-    userId, commentId, articleId, content,
-    id: genUUID(),
-    createTime: Date.now(),
-    isDeleted: false,
-  })).ops[0]
+const addOneComment = async (userId, articleId, content, commentId = null) => (await mongoModel.commentModel.insertMany({
+  userId,
+  commentId,
+  articleId: articleId,
+  content,
+  id: genUUID(),
+  createTime: Date.now(),
+  isDeleted: false,
+}))[0]
 
 /**
  * @function
@@ -45,15 +47,14 @@ const addOneComment = async (userId, articleId, content, commentId=null) =>
  */
 const deleteOneComment = async (id, {articleId, userId}) => {
   const updateRole = articleId ? 'article' : 'user'
-  const result = await mongo.db.collection(collections.COMMENT).findOneAndUpdate({id}, {
+  return await mongoModel.commentModel.findOneAndUpdate({id}, {
     $set: {
       isDeleted: true,
       deletedTime: Date.now(),
       deletedBy: articleId || userId,
       updater: updateRole
     }
-  }, {...projection, returnOriginal: false})
-  return result.value
+  }, {...projection, new: true})
 }
 
 /**
@@ -62,7 +63,7 @@ const deleteOneComment = async (id, {articleId, userId}) => {
  * @return {Promise}
  * */
 const deleteCommentsByArticle = async articleId =>
-  await mongo.db.collection(collections.COMMENT).updateMany({articleId}, {
+  await mongoModel.commentModel.updateMany({articleId}, {
     $set: {
       isDeleted: true,
       deletedTime: Date.now(),

@@ -41,7 +41,7 @@ h1 {
     margin: 0 auto;
 }
 
-#comment-box #user-header {
+#comment-box .user-header {
     width: 60px;
     height: 60px;
     border: 1px solid #006600;

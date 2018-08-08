@@ -7,43 +7,68 @@ $(function () {
   const userSelect = $('#user-select')
   const userInfoDiv = $('#user-info')
   const upVoteArticle = $('#article-up-vote')
-  const userHeader = $('#user-header')
+  const userHeader = $('.user-header')
   const commentContent = $('#comment-text')
   const submitComment = $('#submit-comment')
+  const commentList = $('#comment-list')
 
   let selectedUserId = ''
   let userInfo = {}
   let users = []
   let article = {}
+  let comments = []
 
-  $.get('/article/0001')
-    .then(d => {
-      article = d
-      articleTitle.html(d.title)
-      articleContent.html(d.content.split('。').join('。<br>'))
-      upVoteArticle.html('点赞(' + (article.upVoteCount) + ')')
-    })
-    .then($.get('/comments/article/0001')).then(d=> {})
-    .catch(e => errorMessageP.html(e.statusText).show())
+  const handleArticleModel = (d) => {
+    article = d
+    articleTitle.html(d.title)
+    articleContent.html(d.content.split('。').join('。<br>'))
+    upVoteArticle.html('点赞(' + (article.upVoteCount) + ')')
+  }
 
-  $.get('/user')
-    .then(d => {
-      users = d
-      selectedUserId = d[0].id
-      userInfo = d[0]
-      userHeader.html(userInfo.name[0])
-      if (userInfo.upVoteArticles.some(record => record.article === article.id)) {
-        upVoteArticle.html('已点赞(' + article.upVoteCount + ')')
-      }
-      userInfoDiv.html(JSON.stringify(userInfo))
-      $.each(d, (i, user) => {
-        userSelect.append($('<option>', {
-          text: user.name,
-          value: user.id
-        }))
-      })
+  const handleUserModel = d => {
+    users = d
+    selectedUserId = d[0].id
+    userInfo = d[0]
+    userHeader[0].html(userInfo.name[0])
+    if (userInfo.upVoteArticles.some(record => record.article === article.id)) {
+      upVoteArticle.html('已点赞(' + article.upVoteCount + ')')
+    }
+    userInfoDiv.html(JSON.stringify(userInfo))
+    $.each(d, (i, user) => {
+      userSelect.append($('<option>', {
+        text: user.name,
+        value: user.id
+      }))
     })
-    .catch(e => errorMessageP.html(e.statusText).show())
+  }
+
+  const handleCommentsModel = d => {
+    comments = d
+    const ul = $('<ul/>')
+    commentList.append(ul)
+    d.map(comment => {
+      ul.append($(`<li>
+    <span class="user-header">${users.filter(user => user.id === comment.userId)[0].name[0]}</span>
+    <p>${comment.content}</p>
+</li>`))
+    })
+  }
+
+  const handleError = error => {
+
+  }
+
+  const refreshPage = () => {
+    Promise.all([$.get('/article/0001'), $.get('/user'), $.get('/comments/article/0001')]).then(([article, user, commentsOfArticle]) => {
+
+      handleArticleModel(article)
+      handleUserModel(user)
+      handleCommentsModel(commentsOfArticle)
+
+    }).catch(e => errorMessageP.html(e.statusText).show())
+  }
+
+  refreshPage()
 
   userSelect.on('change', function () {
     selectedUserId = this.value
@@ -72,10 +97,6 @@ $(function () {
       .then(d => {})
       .catch(e => errorMessageP.html(e.statusText).show())
   })
-
-  $.get('/comments/article/0001').then(d => {
-
-  }).catch(e => errorMessageP.html(e.statusText).show())
 
   articleComment.on('click', function () {
 

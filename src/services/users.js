@@ -10,8 +10,15 @@ const getOneUser = async id => await mongoModel.userModel.findOne({id}, projecti
 
 /**
  * modifiable field of user info
- * @typedef {('upVoteArticles' | 'downVoteArticles' | 'upVoteComments' | 'downVoteComments' | 'commentCount')} fieldType
+ * @enum {string}
+ * @readonly
  * */
+const fieldType = {
+  upVoteArticles: 'upVoteArticles',
+  downVoteArticles: 'downVoteArticles',
+  upVoteComments: 'upVoteComments',
+  commentCount: 'commentCount',
+}
 
 /**
  * update user info
@@ -23,10 +30,11 @@ const getOneUser = async id => await mongoModel.userModel.findOne({id}, projecti
  * @param document {object} data apply on user info
  * @param [document.article] {string} data apply on user info
  * @param [document.comment] {string} data apply on user info
- * @param [document.count] {number} data apply on user info
+ * @param {number} [document.count = 1] data apply on user info
  * @return {Promise}
  * */
 const updateOneUser = async (id, field, type, document) => {
+  document.count = document.count || 1
   const _projection = {...projection, new: true}
   switch (field) {
     case 'upVoteArticles':

@@ -23,12 +23,9 @@ const getAllArticles = async () => {
  * @async
  * @param id {string} user id
  * @param field {fieldType} can modified field in user info
- * @param type {actionType} action type
- * @param document {object} data apply on user info
- * @param document.count {number}
  * @return {Promise}
  * */
-const updateOneArticle = async (id, field, type, document) => {
+const updateOneArticle = async (id, field) => {
   const _projection = {...projection, new: true, runValidators: true}
   document.count = type === 'add' ? document.count : -document.count
   switch (field) {

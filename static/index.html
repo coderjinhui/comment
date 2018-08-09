@@ -7,41 +7,45 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Comment</title>
     <link rel="stylesheet" href="./index.css">
-    <script src="./jquery-3.3.1.min.js"></script>
     <script src="index.js"></script>
 </head>
 <body>
-<h1>Index</h1>
-<div id="article">
-    <h2 id="article-title"></h2>
-    <p id="error"></p>
-    <p id="article-content"></p>
-    <p>
-        <button id="article-up-vote">点赞</button>
-        <button id="article-down-vote">反对</button>
-        <button id="article-comment">评论</button>
-    </p>
+<div id="main-content">
+    <div id="article">
+        <h2 id="article-title"></h2>
+        <p id="error"></p>
+        <p id="article-content"></p>
+        <p>
+            <button id="article-up-vote">点赞</button>
+            <button id="article-down-vote">反对</button>
+            <button id="article-comment">评论</button>
+        </p>
 
-</div>
-
-<div id="user-list">
-    <select name="" id="user-select"></select>
-    <div id="user-info"></div>
-</div>
-
-
-<div id="comment-box">
-
-    <div>
-        <span class="user-header"></span>
-        <div id="comment-text" contenteditable="true"></div>
-        <button id="submit-comment">提交评论</button>
     </div>
 
+    <hr>
+
+    <div id="user-list">
+        <select name="" id="user-select"></select>
+        <pre><code id="user-info"></code>
+        </pre>
+    </div>
+
+
+    <div id="comment-box">
+
+        <span id="comment-header" class="user-header"></span>
+        <div id="comment-text" contenteditable="true"></div>
+        <p>
+            <button id="submit-comment">提交评论</button>
+        </p>
+
+    </div>
+
+    <div id="comment-list">
+        <ul></ul>
+    </div>
 </div>
 
-<div id="comment-list">
-    <ul></ul>
-</div>
 </body>
 </html>

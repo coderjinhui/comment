@@ -95,11 +95,11 @@ const main = () => {
 
     selectedUserId = this.value
     userInfo = users.filter(user => user.id === selectedUserId)[0]
-    userHeader.html(userInfo.name[0])
-    userInfoDiv.html(JSON.stringify(userInfo))
+    commentHeader.innerText = userInfo.name[0]
+    userInfoDiv.innerText = JSON.stringify(userInfo)
 
     if (userInfo.upVoteArticles.find(record => record.article === article.id) > -1) {
-      upVoteArticle.html('已点赞(' + (article.upVoteCount) + ')')
+      upVoteArticle.innerText = '已点赞(' + (article.upVoteCount) + ')'
       upVoteArticle.disabled = true
     }
   }
@@ -113,13 +113,13 @@ const main = () => {
       }))
   }
   submitComment.onclick = function () {
-    const _commentContent = commentContent.html().trim()
+    const _commentContent = commentContent.innerText.trim()
     if (!_commentContent) return
-    $.ajax({
-      url: '/comments/add',
-      method: 'PUT',
-      data: {content: _commentContent, userId: userInfo.id, articleId: article.id}
-    })
+    request('/comments/add',
+      {
+        method: 'PUT',
+        data: {content: _commentContent, userId: userInfo.id, articleId: article.id}
+      })
       .then(d => {
         if (d.content === _commentContent) {
           $.get('/comments/article/0001').then(d => {
@@ -127,7 +127,7 @@ const main = () => {
           })
         }
       })
-      .catch(e => errorMessageP.html(e.statusText).show())
+      .catch(e => handleError(e))
   }
 
 }

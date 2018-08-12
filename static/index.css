@@ -52,16 +52,16 @@ h1 {
 
 #comment-box {
     display: block;
-    width: 520px;
+    width: 760px;
     margin: 0 auto;
 }
 
 #comment-box > div {
-    width: 700px;
 }
 
 #comment-box > div > p {
     text-align: right;
+    overflow: hidden;
 }
 
 .user-header {
@@ -74,14 +74,42 @@ h1 {
     line-height: 60px;
     text-align: center;
     font-size: 46px;
+    float: left;
+    margin-left: -70px;
+}
+
+#comment-body {
+
 }
 
 #comment-text {
-    display: inline-block;
-    width: 600px;
     border: 1px solid #888888;
     border-radius: 5px;
     min-height: 200px;
     padding: 10px;
+}
+
+#comment-text:focus {
+    outline: none;
+    box-shadow: 0 0 3pt 2pt #2188ff;
+}
+
+#submit-comment {
+    float: right;
+    color: #fff;
+    background-color: #28a745;
+    position: relative;
+    display: inline-block;
+    padding: 6px 12px;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 20px;
+    white-space: nowrap;
+    vertical-align: middle;
+    cursor: pointer;
+    user-select: none;
+    background-size: 110% 110%;
+    border: 1px solid rgba(27,31,35,0.2);
+    border-radius: 0.25em;
 }
 

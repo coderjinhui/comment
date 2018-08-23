@@ -1,19 +1,6 @@
 const $ = document.querySelector.bind(document)
 const $$ = document.querySelectorAll.bind(document)
 
-const request = async (url, options = {}) => {
-  options.headers = options.headers || {}
-  options.headers['Content-Type'] = 'Content-Type: application/json; charset=utf-8'
-
-  return fetch(url, options).then(res => {
-    if (res.ok) {
-      return res.json()
-    } else {
-      return Promise.reject(res)
-    }
-  })
-}
-
 const main = () => {
 
   const articleTitle = $('#article-title')
@@ -95,11 +82,11 @@ const main = () => {
 
     selectedUserId = this.value
     userInfo = users.filter(user => user.id === selectedUserId)[0]
-    commentHeader.innerText = userInfo.name[0]
+    userHeader.innerText = userInfo.name[0]
     userInfoDiv.innerText = JSON.stringify(userInfo)
 
     if (userInfo.upVoteArticles.find(record => record.article === article.id) > -1) {
-      upVoteArticle.innerText = '已点赞(' + (article.upVoteCount) + ')'
+      upVoteArticle.innerText = ('已点赞(' + (article.upVoteCount) + ')')
       upVoteArticle.disabled = true
     }
   }
@@ -107,7 +94,7 @@ const main = () => {
     if (userInfo.upVoteArticles.find(record => record.article === article.id)) {
       return
     }
-    $.post('/user/upVoteArticle', {userId: selectedUserId, articleId: article.id})
+    request('/user/upVoteArticle', {body: {userId: selectedUserId, articleId: article.id}, method: 'post'})
       .then((d => {
         console.log(d)
       }))
@@ -115,19 +102,17 @@ const main = () => {
   submitComment.onclick = function () {
     const _commentContent = commentContent.innerText.trim()
     if (!_commentContent) return
-    request('/comments/add',
-      {
-        method: 'PUT',
-        data: {content: _commentContent, userId: userInfo.id, articleId: article.id}
-      })
+    request('/comments/add', {
+      method: 'PUT', body: {content: _commentContent, userId: userInfo.id, articleId: article.id}
+    })
       .then(d => {
         if (d.content === _commentContent) {
-          $.get('/comments/article/0001').then(d => {
+          request('/comments/article/0001').then(d => {
             handleCommentsModel(d)
           })
         }
       })
-      .catch(e => handleError(e))
+      .catch(error => handleError(error))
   }
 
 }

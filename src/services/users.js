@@ -34,26 +34,20 @@ const fieldType = {
  * @return {Promise}
  * */
 const updateOneUser = async (id, field, type, document) => {
-  document.count = document.count || 1
   const _projection = {...projection, new: true}
   switch (field) {
     case 'upVoteArticles':
     case 'downVoteArticles':
     case 'upVoteComments':
     case 'downVoteComments':
+      /*
+      * document: {article: '0001', timestamp: xxx}
+      * or
+      * document: {comment: '0001', timestamp: xxx}
+      * */
       if (type === 'add') {
-        /*
-        * document: {article: '0001', timestamp: xxx}
-        * or
-        * document: {comment: '0001', timestamp: xxx}
-        * */
         return await mongoModel.userModel.findOneAndUpdate({id}, {$push: {[field]: document}}, _projection)
       } else if (type === 'remove') {
-        /*
-        * document: {article: '0001}
-        * or
-        * document: {comment: '0001}
-        * */
         const user = await mongoModel.userModel.findOne({id})
         const index = user[field].findIndex(record => (record.article || record.comment) === (document.article || document.comment))
         if (index > -1) {
@@ -65,6 +59,12 @@ const updateOneUser = async (id, field, type, document) => {
       }
       break
     case 'commentCount':
+      document.count = document.count || 1
+      /*
+      * document: {article: '0001'}
+      * or
+      * document: {comment: '0001'}
+      * */
       const doc = await mongoModel.userModel.findOneAndUpdate({id}, {$inc: {[field]: (type === 'add' ? 1 : -1) * document.count}}, _projection)
       doc.commentCount += (type === 'add' ? 1 : -1) * document.count
       return await doc.save()
